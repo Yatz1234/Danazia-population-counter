@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compteur</title>
+    <style>
+        #counter {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">147200000</div>
+
+    <script>
+        const targetTime = new Date("2025-01-01T00:00:00-05:00").getTime(); // Date et heure cible (heure du Québec)
+        const startValue = 147200000;
+        const endValue = 151640640;
+        const duration = (targetTime - new Date().getTime()) / 1000; // Durée en secondes
+
+        let currentValue = startValue;
+        const increment = (endValue - startValue) / duration;
+
+        function updateCounter() {
+            const now = new Date().getTime();
+            if (now >= targetTime) {
+                document.getElementById("counter").innerText = endValue;
+                return;
+            }
+            currentValue += increment;
+            document.getElementById("counter").innerText = Math.floor(currentValue);
+            requestAnimationFrame(updateCounter);
+        }
+
+        updateCounter();
+    </script>
+</body>
+</html>
