@@ -20,22 +20,29 @@
             max-width: 200px;
             margin: 20px auto;
         }
+        #localTime {
+            font-size: 1.5em;
+            color: #555;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Danazia Population Counter</h1>
     <img src="https://3ba8d8ca06.cbaul-cdnwnd.com/ad31ff7aa5568419f0bcf71e9af28d64/200000003-acfe8acfea/drapeau%20Danazie.webp?ph=3ba8d8ca06" alt="Drapeau de Danazia">
     <div id="counter">147202000</div>
+    <div id="localTime">Local time: --:--:--</div>
 
     <script>
         const startValue = 147202000;
         const annualGrowthRate = 0.02905; // 2.905%
-        const startDate = new Date("2023-01-01T00:00:00-05:00").getTime(); // Start date (1 January 2023)
+        const startDate = new Date("2024-10-15T00:00:00-05:00").getTime(); // Date de début (aujourd'hui)
 
         function calculateCurrentValue() {
             const now = new Date().getTime();
-            const yearsElapsed = (now - startDate) / (1000 * 60 * 60 * 24 * 365.25); // Including leap years
-            return Math.floor(startValue * Math.pow((1 + annualGrowthRate), yearsElapsed));
+            const daysElapsed = (now - startDate) / (1000 * 60 * 60 * 24);
+            const growthFactor = Math.pow((1 + annualGrowthRate), daysElapsed / 365.25); // Including leap years
+            return Math.floor(startValue * growthFactor);
         }
 
         function updateCounter() {
@@ -45,11 +52,21 @@
             requestAnimationFrame(updateCounter);
         }
 
+        function updateLocalTime() {
+            const now = new Date();
+            const utc3Time = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3 * 3600000));
+            const hours = utc3Time.getHours().toString().padStart(2, '0');
+            const minutes = utc3Time.getMinutes().toString().padStart(2, '0');
+            const seconds = utc3Time.getSeconds().toString().padStart(2, '0');
+            document.getElementById("localTime").innerText = `Local time: ${hours}:${minutes}:${seconds}`;
+        }
+
         function initializeCounter() {
             if (localStorage.getItem('counterValue')) {
                 document.getElementById("counter").innerText = localStorage.getItem('counterValue');
             }
             updateCounter();
+            setInterval(updateLocalTime, 1000);
         }
 
         initializeCounter();
