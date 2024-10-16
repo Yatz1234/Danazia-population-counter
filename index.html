@@ -9,29 +9,35 @@
     </style>
 </head>
 <body>
-    <div id="counter">147200000</div>
+    <div id="counter">147201000</div>
 
     <script>
-        const targetTime = new Date("2025-01-01T00:00:00-05:00").getTime(); // Date et heure cible (heure du Québec)
-        const startValue = 147200000;
-        const endValue = 151640640;
-        const duration = (targetTime - new Date().getTime()) / 1000; // Durée en secondes
+        const startValue = 147201000;
+        const incrementPerDay = 13079;
+        const startTime = new Date("2023-10-15T00:00:00-05:00").getTime(); // Start date (today's date)
 
-        let currentValue = startValue;
-        const increment = (endValue - startValue) / duration;
+        function calculateCurrentValue() {
+            const now = new Date().getTime();
+            const timeElapsed = now - startTime;
+            const daysElapsed = timeElapsed / (1000 * 60 * 60 * 24);
+            return Math.floor(startValue + (daysElapsed * incrementPerDay));
+        }
 
         function updateCounter() {
-            const now = new Date().getTime();
-            if (now >= targetTime) {
-                document.getElementById("counter").innerText = endValue;
-                return;
-            }
-            currentValue += increment;
-            document.getElementById("counter").innerText = Math.floor(currentValue);
+            const currentValue = calculateCurrentValue();
+            document.getElementById("counter").innerText = currentValue;
+            localStorage.setItem('counterValue', currentValue);
             requestAnimationFrame(updateCounter);
         }
 
-        updateCounter();
+        function initializeCounter() {
+            if (localStorage.getItem('counterValue')) {
+                document.getElementById("counter").innerText = localStorage.getItem('counterValue');
+            }
+            updateCounter();
+        }
+
+        initializeCounter();
     </script>
 </body>
 </html>
